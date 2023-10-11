@@ -18,6 +18,7 @@ import java.util.List;
 @Setter
 public class Persona extends Base{
 
+    @Column(name = "nombre")
     public String nombre;
 
     public String apellido;

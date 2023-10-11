@@ -1,5 +1,7 @@
 package com.example.ApiRestConPaginacion.repository;
 import com.example.ApiRestConPaginacion.entity.Persona;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -15,20 +17,36 @@ public interface PersonaRepository extends BaseRepository<Persona, Long>{
 
     List<Persona> findByNombreContainingOrApellidoContaining(String nombre, String apellido);
 
+    Page<Persona> findByNombreContainingOrApellidoContaining(String nombre, String apellido, Pageable pageable);
+
     // Anotacion JPQL metodo parametros indexados
     @Query(
-            value = "SELECT p FROM Persona p WHERE p.nombre LIKE '%?1%' OR p.apellido LIKE '%?1%'"
+            value = "SELECT p FROM Persona p WHERE p.nombre LIKE %:filtro% OR p.apellido LIKE %:filtro%"
     )
 
-    List<Persona> search(String filtro);
+    List<Persona> search(@Param("filtro") String filtro);
+
+
+    @Query(
+            value = "SELECT p FROM Persona p WHERE p.nombre LIKE %:filtro% OR p.apellido LIKE %:filtro%"
+    )
+
+    List<Persona> searchPaginado(@Param("filtro") String filtro, Pageable pageable);
 
     //Anotacion @QueryNativa metodo parametros nombrados
     @Query(
-            value = "SELECT * FROM persona WHERE persona.nombre LIKE '%:filtro%' OR persona.apellido LIKE '%:filtro%'" ,
+            value = "SELECT * FROM persona WHERE persona.nombre LIKE %:filtro% OR persona.apellido LIKE %:filtro%" ,
             nativeQuery = true
     )
 
-    List<Persona> searchNative(@Param("flitro") String filtro);
+    List<Persona> searchNative(@Param("filtro") String filtro);
+
+    @Query(
+            value = "SELECT * FROM persona WHERE persona.nombre LIKE %:filtro% OR persona.apellido LIKE %:filtro%" ,
+            countQuery = "SELECT count(*) FROM persona",
+            nativeQuery = true
+    )
+    Page<Persona> searchNativePaginado(@Param("filtro") String filtro, Pageable pageable);
 
 
 }

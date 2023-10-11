@@ -6,6 +6,7 @@ import com.example.ApiRestConPaginacion.repository.PersonaRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -35,6 +36,17 @@ public class PersonaServiceImpl extends BaseServiceImpl<Persona,Long> implements
 
     @Transactional
     @Override
+    public List<Persona> searchPaginado(String filtro, Pageable pageable) throws Exception{
+        try{
+            List<Persona> personas=personaRepository.search(filtro);
+            return personas;
+        }catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Transactional
+    @Override
     public List<Persona> searchNative(String filtro) throws Exception{
         try{
             List<Persona> personas=personaRepository.searchNative(filtro);
@@ -46,7 +58,29 @@ public class PersonaServiceImpl extends BaseServiceImpl<Persona,Long> implements
 
     @Transactional
     @Override
+    public List<Persona> searchNativePaginado(String filtro, Pageable pageable) throws Exception{
+        try{
+            List<Persona> personas=personaRepository.searchNative(filtro);
+            return personas;
+        }catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Transactional
+    @Override
     public List<Persona> searchQuery(String nombre, String apellido) throws Exception{
+        try{
+            List<Persona> personas=personaRepository.findByNombreContainingOrApellidoContaining(nombre, apellido);
+            return personas;
+        }catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Transactional
+    @Override
+    public List<Persona> searchQueryPaginado(String nombre, String apellido, Pageable pageable) throws Exception{
         try{
             List<Persona> personas=personaRepository.findByNombreContainingOrApellidoContaining(nombre, apellido);
             return personas;
